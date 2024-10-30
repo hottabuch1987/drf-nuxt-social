@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     # my apps
     'account.apps.AccountConfig',
+    'direct.apps.DirectConfig',
 ]
 
 MIDDLEWARE = [
