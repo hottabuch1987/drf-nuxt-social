@@ -15,7 +15,8 @@ channels
 channels-redis
 flower
 gunicorn
-drf_spectacular
 django-filter
 python-slugify
 stripe
+drf-spectacular
+drf-spectacular-sidecar

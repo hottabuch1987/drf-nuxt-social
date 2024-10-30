@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import User
+from .models import User, PhotoGallery
+
+
+class PhotoGalleryAdmin(admin.TabularInline):
+    model = PhotoGallery
+    extra = 1  # Количество пустых полей для добавления
 
 
 @admin.register(User)
@@ -21,3 +26,7 @@ class UserAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return request.user.is_superuser
+    
+    inlines = [PhotoGalleryAdmin]
+
+

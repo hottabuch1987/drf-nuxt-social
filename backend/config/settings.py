@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     'channels_redis',
     'django_celery_results',
     'django_celery_beat',
+    'drf_spectacular',
     # my apps
     'account.apps.AccountConfig',
 ]
@@ -172,6 +173,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # models
 AUTH_USER_MODEL = 'account.User'
 
+#
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=180),
@@ -185,6 +187,15 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    
+}
+# Настройки для drf-spectacular
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'User Management API',                                                  # Название API
+    'DESCRIPTION': 'API для реистрации, получения всех пользователей и переписки.',  # Описание API
+    'VERSION': '1.0.0',                                                              # Версия API
+    'SERVE_INCLUDE_SCHEMA': False,                                                   # Отключение схемы в ответах API
 }
 
 AUTHENTICATION_BACKENDS = (
@@ -192,8 +203,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 
-
-
+#logging
 LOGGING = {
     'version': 1,
     'handlers': {

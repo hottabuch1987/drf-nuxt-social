@@ -8,6 +8,7 @@ import uuid
 
 class CustomUserManager(BaseUserManager):
     """Менеджер пользователя."""
+
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError('Email address is required')
@@ -36,7 +37,6 @@ class User(AbstractUser):
     bio = models.TextField('Описание', max_length=500, blank=True)
     date_joined = models.DateTimeField("Дата регистрации", default=timezone.now)
     birth_date = models.DateField('Дата рождения', null=True, blank=True)
-    avatar = models.ImageField("Фото", upload_to='avatars', blank=True, null=True)
     gender = models.CharField("Пол", choices=GENDER_TYPES, max_length=10, blank=True, default="не выбран")
     slug = models.SlugField(max_length=40, unique=True, blank=True)
     phone = models.CharField('Телефон', max_length=12, blank=True)
@@ -70,3 +70,16 @@ class User(AbstractUser):
         verbose_name_plural = 'Пользователи'
 
 
+class PhotoGallery(models.Model):
+    """Модель галереи фотографий пользователя."""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='photos')
+    image = models.ImageField("Изображение", upload_to='photo_gallery/')
+    created_at = models.DateTimeField("Дата добавления", auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Фотография'
+        verbose_name_plural = 'Фотографии'
+
+    def __str__(self):
+        return f'Photo {self.id} by {self.user.email}'
