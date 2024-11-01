@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto p4-10">
+  <div class="container mx-auto p-10">
     <div class="max-w-md mx-auto bg-white rounded-lg overflow-hidden md:max-w-xl">
       <div class="md:flex">
         <div class="w-full px-6 py-8 md:p-8">
@@ -7,20 +7,18 @@
 
           <form @submit.prevent="submitForm" class="mt-6 text-gray-500">
             <div class="mb-6">
-              <label class="block  font-bold mb-2 " for="username"
-                >Логин</label
-              >
+              <label class="block font-bold mb-2" for="username">Логин</label>
               <input
                 type="text"
                 id="username"
                 v-model="formData.username"
                 required
-                class="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline"
+                class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Логин"
               />
             </div>
             <div class="mb-6">
-              <label class="block  font-bold mb-2" for="email">Email</label>
+              <label class="block font-bold mb-2" for="email">Email</label>
               <input
                 type="email"
                 id="email"
@@ -31,9 +29,7 @@
               />
             </div>
             <div class="mb-6">
-              <label class="block  font-bold mb-2" for="first_name"
-                >Имя</label
-              >
+              <label class="block font-bold mb-2" for="first_name">Имя</label>
               <input
                 type="text"
                 id="first_name"
@@ -42,11 +38,8 @@
                 placeholder="Имя"
               />
             </div>
-
             <div class="mb-6">
-              <label class="block  font-bold mb-2" for="last_name"
-                >Фамилия</label
-              >
+              <label class="block font-bold mb-2" for="last_name">Фамилия</label>
               <input
                 id="last_name"
                 v-model="formData.last_name"
@@ -55,7 +48,7 @@
               />
             </div>
             <div class="mb-6">
-              <label class="block  font-bold mb-2" for="bio">О себе</label>
+              <label class="block font-bold mb-2" for="bio">О себе</label>
               <input
                 type="text"
                 id="bio"
@@ -64,30 +57,15 @@
                 placeholder="О себе"
               />
             </div>
-            <div class="mb-6">
-              <label class="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  v-model="formData.is_trainer"
-                  class="form-checkbox"
-                />
-                <span class="ml-2">Бизнес аккаунт</span>
-              </label>
-            </div>
-            <div class="mb-6">
-              <label class="block  font-bold mb-2" for="avatar"
-                >Аватар</label
-              >
-              <input type="file" ref="file" placeholder="Загрузить аватар" />
-            </div>
 
             <template v-if="errors.length > 0">
               <div class="bg-red-300 text-white rounded-lg p-6">
                 <p v-for="error in errors" :key="error">{{ error }}</p>
               </div>
             </template>
+
             <button
-              class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              class="bg-indigo-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
               Изменить
@@ -96,14 +74,12 @@
               <nuxt-link
                 class="text-red-500 hover:underline"
                 :to="{ name: 'edit-password' }"
-                >Изменить пароль</nuxt-link
-              >
+              >Изменить пароль</nuxt-link>
             </p>
           </form>
-          <button @click="deleteUser" class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
 
+          <button @click="confirmDelete" class="mt-4 bg-white border border-red-500 hover:bg-red-200 text-red-500 font-bold py-2 px-4 rounded">
             Удалить аккаунт
-
           </button>
         </div>
       </div>
@@ -130,7 +106,6 @@ export default {
         first_name: userStore.user.first_name,
         last_name: userStore.user.last_name,
         bio: userStore.user.bio,
-        is_trainer: userStore.user.is_trainer,
       },
       errors: [],
     };
@@ -157,11 +132,6 @@ export default {
         formData.append("first_name", this.formData.first_name);
         formData.append("last_name", this.formData.last_name);
         formData.append("bio", this.formData.bio);
-        formData.append("is_trainer", this.formData.is_trainer);
-
-        if (this.$refs.file.files.length > 0) {
-          formData.append("avatar", this.$refs.file.files[0]);
-        }
 
         axios
           .put("/edit-account/", formData)
@@ -174,37 +144,32 @@ export default {
               first_name: this.formData.first_name,
               last_name: this.formData.last_name,
               bio: this.formData.bio,
-              is_trainer: this.formData.is_trainer,
             });
-            this.userStore.setAvatar(response.data.avatar);
             this.$router.back();
           })
           .catch((error) => {
             console.log("error", error);
-            this.toastStore.showToast(
-              3000,
-              "Произошла ошибка при сохранении информации!",
-              "bg-red-300"
-            );
+            this.toastStore.showToast(3000, "Произошла ошибка при сохранении информации!", "bg-red-300");
           });
+      }
+    },
+    confirmDelete() {
+      if (confirm("Вы уверены, что хотите удалить аккаунт? Это действие невозможно отменить!")) {
+        this.deleteUser();
       }
     },
     deleteUser() {
       axios
       .post("/delete-user/")
-        .then(() => {
-          this.toastStore.showToast(3000, "Пользователь успешно удален!", "bg-red-500");
-          this.userStore.removeToken();
-          this.$router.push({ name: "login" });
-        })
-        .catch((error) => {
-
-          console.log("error", error);
-          this.toastStore.showToast(3000, "Произошла ошибка при удалении пользователя!", "bg-red-300");
-        })
-        .finally(() => {
-          this.isLoading = false;
-        });
+      .then(() => {
+        this.toastStore.showToast(3000, "Пользователь успешно удален!", "bg-red-500");
+        this.userStore.removeToken();
+        this.$router.push({ name: "login" });
+      })
+      .catch((error) => {
+        console.log("error", error);
+        this.toastStore.showToast(3000, "Произошла ошибка при удалении пользователя!", "bg-red-300");
+      });
     }
   },
 };

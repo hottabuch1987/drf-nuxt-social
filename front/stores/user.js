@@ -12,12 +12,10 @@ export const useUserStore = defineStore({
             email: null,
             access: null,
             refresh: null,
-            avatar: null,
             first_name: null,
             last_name: null,
             bio: null,
             phone: null,
-            is_trainer: false,
             likedPosts: [] // Массив для хранения ID лайкнутых постов
         },
     }),
@@ -39,10 +37,8 @@ export const useUserStore = defineStore({
                     this.user.last_name = localStorage.getItem('user.last_name');
                     this.user.bio = localStorage.getItem('user.bio');
                     this.user.phone = localStorage.getItem('user.phone');
-                    this.user.avatar = localStorage.getItem('user.avatar');
                     this.user.isAuthenticated = true;
-                    this.user.is_trainer = localStorage.getItem('user.is_trainer') === 'true';
-                    // console.log('Initialized user:this.user.is_trainer ', this.user.is_trainer );
+         
 
                     this.refreshToken();
                     // console.log('Initialized user:', this.user);
@@ -54,22 +50,9 @@ export const useUserStore = defineStore({
             }
         },
         
-        likePost(postId) {
-            if (process.client) { // Проверка на клиенте
-                if (!this.likedPosts.includes(postId)) {
-                    this.likedPosts.push(postId);
-                    localStorage.setItem('likedPosts', JSON.stringify(this.likedPosts));
-                }
-            }
-        },
+  
 
-        unlikePost(postId) {
-            if (process.client) { // Проверка на клиенте
-                this.likedPosts = this.likedPosts.filter(id => id !== postId);
-                localStorage.setItem('likedPosts', JSON.stringify(this.likedPosts));
-            }
-        },
-
+    
         setToken(data) {
             if (process.client) { // Проверка на клиенте
                 console.log('setToken', data);
@@ -94,12 +77,11 @@ export const useUserStore = defineStore({
                     email: null,
                     access: null,
                     refresh: null,
-                    avatar: null,
                     first_name: null,
                     last_name: null,
                     bio: null,
                     phone: null,
-                    is_trainer: false
+               
                 };
 
                 localStorage.removeItem('user.access');
@@ -111,8 +93,7 @@ export const useUserStore = defineStore({
                 localStorage.removeItem('user.last_name');
                 localStorage.removeItem('user.bio');
                 localStorage.removeItem('user.phone');
-                localStorage.removeItem('user.avatar');
-                localStorage.removeItem('user.is_trainer');
+              
             }
         },
 
@@ -130,8 +111,7 @@ export const useUserStore = defineStore({
                 this.user.last_name = user.last_name;
                 this.user.bio = user.bio;
                 this.user.phone = user.phone;
-                this.user.avatar = user.avatar;
-                this.user.is_trainer = user.is_trainer;
+        
 
                 localStorage.setItem('user.id', this.user.id);
                 localStorage.setItem('user.username', this.user.username);
@@ -140,8 +120,7 @@ export const useUserStore = defineStore({
                 localStorage.setItem('user.last_name', this.user.last_name);
                 localStorage.setItem('user.bio', this.user.bio);
                 localStorage.setItem('user.phone', this.user.phone);
-                localStorage.setItem('user.avatar', this.user.avatar);
-                localStorage.setItem('user.is_trainer', user.is_trainer);
+    
             }
         },
 
@@ -162,11 +141,6 @@ export const useUserStore = defineStore({
             });
         },
 
-        setAvatar(avatarUrl) {
-            if (process.client) { // Проверка на клиенте
-                this.user.avatar = avatarUrl;
-                localStorage.setItem('user.avatar', avatarUrl);
-            }
-        },
+       
     },
 });

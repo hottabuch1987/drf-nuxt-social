@@ -24,17 +24,7 @@
           <p v-if="user.bio">
             <span class="text-gray-600 font-bold">{{ user.bio }}</span>
           </p>
-          <div class="inline-flex text-gray-700 dark:text-gray-300 items-center" v-if="user.is_trainer">
-            <svg 
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="w-6 h-6 text-yellow-500"
-            > 
-              <path d="M12 .587l3.668 7.568 8.332 1.144-6.004 5.547 1.412 8.208L12 18.896l-7.408 3.883 1.412-8.208-6.004-5.547 8.332-1.144L12 .587z"/>
-            </svg>
-            Бизнес аккаунт
-          </div>
+          
         </div>
         <div v-if="hasDialog">
           <nuxt-link 

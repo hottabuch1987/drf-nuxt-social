@@ -30,16 +30,7 @@
                   <p class="text-sm font-semibold text-black cursor-auto my-3">
                     <nuxt-link :to="`/profile/${user.slug}`" class="font-bold text-red-600">{{user.last_name}} {{ user.first_name }}</nuxt-link>
                   </p>
-                  <div class="ml-auto">
-                    <svg v-if="user.is_trainer"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      class="w-6 h-6 text-yellow-500"
-                    >
-                      <path d="M12 .587l3.668 7.568 8.332 1.144-6.004 5.547 1.412 8.208L12 18.896l-7.408 3.883 1.412-8.208-6.004-5.547 8.332-1.144L12 .587z"/>
-                    </svg>
-                  </div>
+                  
                 </div>
               </div>
             </nuxt-link>

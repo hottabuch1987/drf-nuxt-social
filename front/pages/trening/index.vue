@@ -23,7 +23,6 @@
             {{ cat.owner_username === userStore.user.username ? 'Моя категория' : 'Разместил  ' + cat.owner_username }}
           </span>
           
-          <img :src="cat.get_image" alt="Category" class="h-80 w-72 object-cover rounded-t-xl" />
           <div class="px-4 py-3 w-72">
             <span class="text-gray-400 mr-3 uppercase text-xs">Объявления</span>
             <p class="text-lg font-bold text-black truncate block capitalize"></p>
@@ -91,7 +90,7 @@ export default {
     getCategories() {
       this.isLoading = true; // Устанавливаем isLoading в true перед началом запроса
       axios
-        .get('/trening-category/')
+        .get('/trening-category')
         .then(response => {
           this.categories = response.data;
           console.log(response.data);
