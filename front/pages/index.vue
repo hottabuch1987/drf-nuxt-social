@@ -21,7 +21,7 @@
       <div class="absolute inset-0 bg-black opacity-50">
         <h1 class=""></h1>
       </div>
-      <img class="absolute inset-0 w-full h-full object-cover object-center blur" src="@/assets/img/img_2.jpg" alt="index">
+      <img class="absolute inset-0 w-full h-full object-cover object-center blur" src="@/assets/img/home.jpg" alt="index">
     
       <div class="container mx-auto px-4 py-4 md:py-32 relative">
         <div class="flex flex-col md:flex-row items-center justify-between">
@@ -31,10 +31,10 @@
               Знакомства <br>Общение
             </h1>
             <template v-if="userStore.user.isAuthenticated && userStore.user.id">
-              <p class="text-xl mb-8 text-gray-300">Добро пожаловать</p>
+              <p class="text-xl mb-8 text-gray-300">Добро пожаловать {{ userStore.user.username }}</p>
               <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                <nuxt-link to="/trening"
-                  class="border-2 border-white text-white font-semibold px-8 py-3 rounded-full hover:bg-white hover:text-blue-900 transition duration-300 text-center">Все объявления
+                <nuxt-link to="/posts"
+                  class="border-2 border-white text-white font-semibold px-8 py-3 rounded-full hover:bg-white hover:text-blue-900 transition duration-300 text-center">Все Посты
                 </nuxt-link>
               </div>
             </template>
@@ -109,7 +109,7 @@ export default {
     };
     onMounted(() => {
 
-        document.title = "Главная | Offer";
+        document.title = "Главная | Poster";
 
         init(); // Начинаем загрузку данных после монтирования
 

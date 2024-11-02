@@ -2,7 +2,7 @@
   <div>
     <div class="text-center p-10">
       <h1 class="text-4xl text-gray-400 font-semibold">Мои категории</h1>
-      <button @click="showCreateForm = !showCreateForm" class="mt-4 p-2 bg-blue-400 text-white rounded hover:bg-blue-600 transition">
+      <button @click="showCreateForm = !showCreateForm" class="mt-4 p-2 bg-green-500 text-white rounded hover:bg-green-600 transition">
         {{ showCreateForm ? 'Отменить создание' : 'Создать категорию' }}
       </button>
      
@@ -47,25 +47,7 @@
 
             </div>
 
-            <div class="mb-4">
-
-              <label class="block text-gray-400" for="avatar">Изображение</label>
-
-              <input type="file" @change="handleFileUpload" accept="image/*" class="border border-gray-300 rounded p-2 w-full" />
-
-            </div>
-
-            <div class="mb-4">
-
-              <label class="inline-flex items-center">
-
-                <input type="checkbox" v-model="newCategory.is_published" class="mr-2" />
-
-                <span>Опубликовать</span>
-
-              </label>
-
-            </div>
+            
 
             <button type="submit" class="bg-green-500 text-white p-2 rounded hover:bg-green-600 transition">Создать</button>
 
@@ -83,9 +65,8 @@
       >
       
       <nuxt-link :to="`/my-category/${cat.slug}/`">
-      <img :src="cat.get_image" alt="Category" class="h-80 w-72 object-cover rounded-t-xl" />
       
-      <span class="text-gray-400 mr-3 uppercase text-xs">{{ cat.name }}</span>
+      <span class="text-gray-400 mr-3 uppercase text-xs">Категория <strong>{{ cat.name }}</strong></span>
       
       
       </nuxt-link>
@@ -110,7 +91,7 @@
             <p class="text-lg font-bold text-black truncate block capitalize"></p>
             <div class="flex items-center" v-for="product in cat.products" :key="product.id">
               <p class="text-lg font-semibold text-black cursor-auto my-3">
-                <nuxt-link :to="`/my-product/${product.slug}/`" class="font-bold text-red-600">{{ product.name }}</nuxt-link>
+                <nuxt-link :to="`/my-product/${product.slug}/`" class="font-bold text-gray-600">{{ product.name }}</nuxt-link>
               </p>
               
               <div class="ml-auto">
@@ -136,7 +117,7 @@
             
           </div>
         </a>
-        <span v-else> Нет программ  </span>
+        <span v-else> Нет постов  </span>
               
 
       </div>
@@ -167,8 +148,7 @@ export default {
         // slug: '',
         products: [],
         owner: '',
-        is_published: true,
-        image: '', // Для хранения загружаемого изображения
+
       },
       toastStore: useToastStore(),
     };
@@ -176,7 +156,7 @@ export default {
   mounted() {
     this.getCategories();
     this.setOwner();
-    document.title = "Мои Обьявления | Offer";
+    document.title = "Мои Посты | Poster";
   },
   methods: {
     getCategories() {
@@ -202,14 +182,7 @@ export default {
         console.error('Пользователь не найден или не имеет ID');
       }
     },
-    handleFileUpload(event) {
-      const file = event.target.files[0];
-      console.log(file);
-      if (file) {
-        this.newCategory.image = file; // Сохраняем загруженное изображение
-        console.log(this.newCategory.image, 'this.newCategory.image');
-      }
-    },
+   
     deleteCategory(category) {
       if (confirm(`Вы уверены, что хотите удалить категорию? Все программы связанные с категорий  "${category.name}" будут удалены!`)) {
         this.isLoading = true;
@@ -237,16 +210,12 @@ export default {
       // formData.append('slug', this.newCategory.slug);
       formData.append('is_published', this.newCategory.is_published);
       formData.append('owner', this.newCategory.owner);
-      if (this.newCategory.image) {
-        formData.append('image', this.newCategory.image); // Добавляем изображение
-      }
+      
       console.log(formData, 'formData');
 
       axios
         .post('/my-category/', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data', // Указываем тип контента
-          },
+         
         })
         .then(response => {
           this.categories.push(response.data);
@@ -256,8 +225,8 @@ export default {
             // slug: '',
             products: [],
             owner: this.newCategory.owner || '',
-            is_published: true,
-            image: '',
+          
+     
           };
           this.showCreateForm = false;
           this.toastStore.showToast(5000, `Категория ${response.data.name} создана!`, 'bg-emerald-500');

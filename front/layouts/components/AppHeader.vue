@@ -14,7 +14,7 @@
             <nuxt-link class="md:p-4 py-3 px-3 block transition-transform duration-200 ease-in-out hover:scale-[1.05]" :to="{ name: 'index' }">Главная</nuxt-link>
           </li>
           <li @click="closeMenu">
-            <nuxt-link class="md:p-4 py-3 px-3 block transition-transform duration-200 ease-in-out hover:scale-[1.05]" :to="{ name: 'trening' }">Объявления</nuxt-link>
+            <nuxt-link class="md:p-4 py-3 px-3 block transition-transform duration-200 ease-in-out hover:scale-[1.05]" :to="{ name: 'posts' }">Посты</nuxt-link>
           </li>
           <li @click="closeMenu">
             <nuxt-link class="md:p-4 py-3 px-3 block transition-transform duration-200 ease-in-out hover:scale-[1.05]" :to="{ name: 'profile' }">Пользователи</nuxt-link>

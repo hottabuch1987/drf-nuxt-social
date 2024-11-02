@@ -76,7 +76,7 @@ export default {
   },
 
   mounted() {
-    document.title = "Мои сообщения | Offer";
+    document.title = "Мои сообщения | Poster";
     this.fetchDialogs(); // Загружаем диалоги
   },
 

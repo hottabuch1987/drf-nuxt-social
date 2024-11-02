@@ -111,7 +111,7 @@ export default {
     };
   },
   mounted() {
-    document.title = "Редактировать профиль | Offer";
+    document.title = "Редактировать профиль | Poster";
   },
   methods: {
     submitForm() {

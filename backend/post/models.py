@@ -1,7 +1,5 @@
 from django.db import models
 from account.models import User
-from ckeditor.fields import RichTextField
-import uuid
 from django.conf import settings
 from slugify import slugify
 
@@ -43,10 +41,10 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE, verbose_name='Категория')
+    category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE, verbose_name='категория')
     name = models.CharField(max_length=255, verbose_name='имя')
     slug = models.SlugField(verbose_name='слаг')
-    description = RichTextField(blank=True, null=True, verbose_name='описание c html')
+    description = models.TextField(blank=True, null=True, verbose_name='описание поста')
     image = models.ImageField(upload_to='uploads/', blank=True, null=True, verbose_name='фото')
     video = models.FileField(upload_to='videos/', blank=True, null=True, verbose_name='видео')
     date_added = models.DateTimeField(auto_now_add=True, verbose_name='дата добавления')
@@ -72,8 +70,8 @@ class Product(models.Model):
 
 
     class Meta:
-        verbose_name = 'Продукт'
-        verbose_name_plural = 'Продукты'
+        verbose_name = 'Пост'
+        verbose_name_plural = 'Посты'
         ordering = ('-date_added',)
 
     def __str__(self):

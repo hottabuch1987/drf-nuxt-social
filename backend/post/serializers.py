@@ -19,6 +19,7 @@ class ProductSerializer(serializers.ModelSerializer):
                 "image",
                 "slug",
                 "get_video",
+                "video",
                 'likes_count', 
                 "is_published",            
         ]

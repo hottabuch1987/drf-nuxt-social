@@ -53,7 +53,7 @@
         },
     
         mounted() {
-            document.title = "Регистрация | Offer";
+            document.title = "Регистрация | Poster";
         },
     
         methods: {

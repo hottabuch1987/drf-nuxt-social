@@ -83,7 +83,7 @@ export default {
 
     this.getUsers();
 
-    document.title = "Пользователи | Offer";
+    document.title = "Пользователи | Poster";
 
   },
   methods: {

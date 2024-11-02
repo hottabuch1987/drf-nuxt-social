@@ -63,7 +63,7 @@ export default {
   },
 
   mounted() {
-    document.title = "Диалог с пользователем | Offer"; // Устанавливаем заголовок страницы
+    document.title = "Диалог с пользователем | Poster"; // Устанавливаем заголовок страницы
     this.dialogId = this.$route.params.id; // Получаем ID диалога из параметров маршрута
 
     this.fetchMessages();

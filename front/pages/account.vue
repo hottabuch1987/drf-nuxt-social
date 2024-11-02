@@ -64,7 +64,7 @@ export default {
     },
 
     mounted() {
-        document.title = "Мой профиль | Offer";
+        document.title = "Мой профиль | Poster";
     },
 }
 </script>

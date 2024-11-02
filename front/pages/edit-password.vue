@@ -81,7 +81,7 @@ export default {
         };
         onMounted(() => {
 
-            document.title = "Изменить пароль | Offer";
+            document.title = "Изменить пароль | Poster";
 
 
         });                             

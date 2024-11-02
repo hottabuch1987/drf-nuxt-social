@@ -63,11 +63,12 @@ class CategoryUserView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+
     def post(self, request, format=None):
         user = request.user
         if user:
             # Извлекаем данные для создания новой программы
-            products_data = request.data.pop('products', None)
+            products_data = request.data.get('products', [])
             serializer = CategorySerializer(data=request.data, partial=True)
 
             if serializer.is_valid():
@@ -170,7 +171,7 @@ class ProductUserView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
         except Product.DoesNotExist:
-            return Response({'error': 'Продукт не найден или вы не имеете доступа к нему.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Пост не найден или вы не имеете доступа к нему.'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class DetailProductUserView(APIView):
@@ -199,7 +200,7 @@ class DetailProductUserView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         except Product.DoesNotExist:
-            return Response({'error': 'Продукт не найден или у вас нет прав доступа.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Пост не найден или у вас нет прав доступа.'}, status=status.HTTP_404_NOT_FOUND)
 
 
     def delete(self, request, slug, format=None):

@@ -80,7 +80,7 @@ export default {
   },
 
   mounted() {
-    document.title = "Войти | Offer";
+    document.title = "Войти | Poster";
     this.checkToken();
   },
 
