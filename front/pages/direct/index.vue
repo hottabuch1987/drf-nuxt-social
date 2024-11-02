@@ -29,12 +29,12 @@
               <div v-for="dialog in dialogs" :key="dialog.id" class="py-4 flex items-center justify-between">
 
               <div class="font-medium">
-                <nuxt-link :to="`/profile/${dialog.user1.username}`" class="text-blue-600 hover:underline">
+                <nuxt-link :to="`/profile/${dialog.user1.username}`" class="text-gray-600  text-lg  hover:text-blue-700">
                   {{ dialog.user1.username === userStore.user.username ? 'Вы ' : dialog.user1.username }} 
                 </nuxt-link> 
                 <span class="mx-2"> </span> 
 
-                <nuxt-link :to="`/profile/${dialog.user2.username}`" class="text-blue-600 hover:underline">
+                <nuxt-link :to="`/profile/${dialog.user2.username}`" class="text-gray-600 text-lg hover:text-blue-700">
                   {{ dialog.user2.username === userStore.user.username ? '  Вам' : dialog.user2.username }}
                 </nuxt-link>
 
@@ -45,7 +45,7 @@
                   </svg>
                   Удалить
                 </button>
-              <nuxt-link :to="`/direct/${dialog.id}`" class="bg-blue-600 text-white font-medium py-2 px-4 rounded-full hover:bg-blue-500">Написать</nuxt-link>
+                <nuxt-link :to="`/direct/${dialog.id}`" class="bg-blue-400 text-white font-medium py-2 px-4 rounded-full hover:bg-blue-500">Написать</nuxt-link>
 
               </div>
             </template>
