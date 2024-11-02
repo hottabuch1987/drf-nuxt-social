@@ -1,3 +1,5 @@
+import random
+import string
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
@@ -7,15 +9,36 @@ from .services.user_service import UserService, UserSerializer
 from .models import User
 from .serializers import UserSerializer, EditUserSerializer, ChangePasswordSerializer
 from django.shortcuts import get_object_or_404
+from .tasks import send_verification_email
+
 
 
 class CustomUserCreate(APIView):
     '''Create a new user'''
+
+        
+
+    def generate_verification_code(self):
+        """Генерация случайного кода для подтверждения."""
+
+        return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6)) 
+    
+    
     def post(self, request, format='json'):
         user_data = request.data
+        # Создание пользователя
+
         result, success = UserService.create_user(user_data)
         if success:
+            code = self.generate_verification_code()  # Генерация кода
+            email = user_data.get('email')
+            # Отправляем код на электронную почту
+            send_verification_email.delay(email, code)  # Запускаем задачу Celery
+   
             return Response(result, status=status.HTTP_201_CREATED)
+
+        
+
         return Response(result, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -37,7 +60,6 @@ class MeView(APIView):
         return Response(serializer.data)
     
     
-
 class BlacklistTokenUpdateView(APIView):
     def post(self, request):
         try:
@@ -47,8 +69,6 @@ class BlacklistTokenUpdateView(APIView):
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
 
 
 class ProfileEditView(APIView):
@@ -85,9 +105,6 @@ class DeleteUserView(APIView):
         user.is_active = False
         user.save()
         return Response({'message': 'User deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
-
-
-
 
 
 class UserDetail(APIView):

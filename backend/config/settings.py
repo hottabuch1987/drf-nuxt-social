@@ -60,7 +60,7 @@ CSRF_TRUSTED_ORIGINS = [
 
     'http://localhost:3000',
     "http://localhost:8000",
-    'http://127.0.0.1',
+    'http://127.0.0.1:8000',
 
 ]
 
@@ -180,13 +180,18 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+
 BASE_URL = 'http://127.0.0.1:8000'
+
 STATIC_URL = '/static/'
+
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'staticfiles')]
 
 
 MEDIA_URL = '/media/'
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -225,18 +230,39 @@ SPECTACULAR_SETTINGS = {
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/0',  # URL для подключения к Redis
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'BEST_PING': True,  # Настройка для улучшения производительности в некоторых случаях
+
+
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_NAME = 'my_app_session_id'
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_AGE = 3600  # время в секундах 1 час
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mail.ru'  # SMTP Mail.ru
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'varvar1987a@mail.ru'
+EMAIL_HOST_PASSWORD = 'iwJ9dTEmqqHusBijrVXA'
+EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_TIMEZONE = 'Europe/Moscow'
+CELERY_CACHE_BACKEND = 'default'
+
+
+
+CELERY_BEAT_SHEDULER = {
+    "update-account-info": {
+            "task": "payments.tasks.update_account_info",
+            "scheduler": 60 * 1 # каждую минуту 
         }
     }
-}
-
-
 #logging
 # LOGGING = {
 #     'version': 1,
