@@ -21,9 +21,9 @@
       <div class="flex items-center justify-between">
        
         
-        <nuxt-link class="text-gray-400 mr-3 uppercase text-xs hover:text-red-600" 
+        <nuxt-link class="text-gray-400 mr-3 uppercase text-xs hover:text-red-600" v-if="userStore.user.username"
           :to="cat.owner_username === userStore.user.username ? '/my-product' : `/profile/${cat.owner_username}`">
-          {{ cat.owner_username === userStore.user.username ? 'Мой пост' : 'Разместил ' + cat.owner_username }}
+          {{ cat.owner_username === userStore.user.username ? 'Мой пост' : 'Разместил ' + cat.owner_username}}
         </nuxt-link>
         
         <!-- Кнопка для создания заказа с открытием формы оплаты -->

@@ -4,7 +4,6 @@ from .models import Category, Product
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    likes_count = serializers.IntegerField(source='likes.count', read_only=True)
     owner_username = serializers.CharField(source='category.owner.username', read_only=True)
     class Meta:
         model = Product
@@ -21,7 +20,7 @@ class ProductSerializer(serializers.ModelSerializer):
                 "slug",
                 "get_video",
                 "video",
-                'likes_count', 
+           
                 "is_published",            
         ]
         

@@ -1,6 +1,7 @@
 import random
 import string
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,7 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import User
-from .serializers import UserSerializer, ChangePasswordSerializer,EditUserSerializer
+from .serializers import UserSerializer, ChangePasswordSerializer, EditUserSerializer, UserListSerializer
 from .tasks import send_verification_email
 from .services.user_service import UserService
 
@@ -151,10 +152,11 @@ class BlacklistTokenUpdateView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class UserListView(APIView):
+    '''List all users'''
     permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
-        users = User.objects.order_by('-date_joined').filter(is_active=True)
-        serializer = UserSerializer(users, many=True)
+        users = User.objects.filter(is_active=True).order_by('-date_joined')
+        serializer = UserListSerializer(users, many=True)
         return Response(serializer.data)
     
 
@@ -171,6 +173,8 @@ class ProfileEditView(APIView):
 
 
 class ChangePasswordView(APIView):
+    '''Çhange password'''
+
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -185,6 +189,8 @@ class ChangePasswordView(APIView):
 
 
 class DeleteUserView(APIView):
+    '''Delete user'''
+
     permission_classes = [IsAuthenticated]
 
     def post(self, request):

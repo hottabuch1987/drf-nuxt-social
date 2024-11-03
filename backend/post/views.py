@@ -37,6 +37,20 @@ class CategoryList(APIView):
         categories = Category.objects.order_by("-date_added")
         serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data)
+    
+
+    def get_categories(self, request):
+        query = request.GET.get('search', '')
+        if query:
+            return self.search_categories(query)
+        else:
+            return Category.objects.order_by("-date_added")
+
+
+    def search_categories(self, query):
+        # Фильтруем категории по названию или другому атрибуту
+        return Category.objects.filter(name__icontains=query).order_by("-date_added")
+
 
 
 class CategoryDetail(APIView):
