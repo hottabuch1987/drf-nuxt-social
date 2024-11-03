@@ -17,6 +17,7 @@ class LatesProductsList(APIView):
         products = Product.objects.filter(is_published=True).order_by('-date_added', )
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
+  
 
 class ProductDetail(APIView):
     def get_object(self, product_slug):

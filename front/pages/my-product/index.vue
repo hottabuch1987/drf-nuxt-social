@@ -71,8 +71,12 @@
         :key="product.id"
         class="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl"
       >
-        <img :src="product.get_image || ''" alt="" class="h-80 w-72 object-cover rounded-t-xl" />
+        <img v-if="product.get_image" :src="product.get_image" alt="" class="h-80 w-72 object-cover rounded-t-xl" />
+
         <nuxt-link :to="`/my-product/${product.slug}/`" class="font-bold text-red-600">{{ product.name }}</nuxt-link>
+        <div class="p-4">
+          <p class="text-gray-500">{{ product.description }}</p>  
+        </div>
       </div>
     </section>
   </div>

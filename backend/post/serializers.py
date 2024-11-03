@@ -14,6 +14,7 @@ class ProductSerializer(serializers.ModelSerializer):
                 "id",
                 'name',
                 "get_absolute_url",
+                "date_added",
                 "description",
                 "get_image",
                 "image",
