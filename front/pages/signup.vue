@@ -77,7 +77,7 @@
                         const response = await axios.post('create/', this.form);
                         if (response.status === 201) {
                             this.toastStore.showToast(5000, 'Пользователь зарегистрирован. Пожалуйста, войдите в систему!', 'bg-green-500');
-                            this.$router.push({ path: '/login' });
+                            this.$router.push({ path: '/active-account' });
                         }
                     } catch (error) {
                         console.error('Error submitting registration form:', error);

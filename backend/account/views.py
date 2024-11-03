@@ -1,53 +1,133 @@
 import random
 import string
+from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from .services.user_service import UserService, UserSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import User
-from .serializers import UserSerializer, EditUserSerializer, ChangePasswordSerializer
-from django.shortcuts import get_object_or_404
+from .serializers import UserSerializer, ChangePasswordSerializer,EditUserSerializer
 from .tasks import send_verification_email
-
-
+from .services.user_service import UserService
 
 class CustomUserCreate(APIView):
     '''Create a new user'''
 
-        
-
     def generate_verification_code(self):
-        """Генерация случайного кода для подтверждения."""
+        return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
-        return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6)) 
-    
-    
     def post(self, request, format='json'):
         user_data = request.data
-        # Создание пользователя
-
         result, success = UserService.create_user(user_data)
-        if success:
-            code = self.generate_verification_code()  # Генерация кода
-            email = user_data.get('email')
-            # Отправляем код на электронную почту
-            send_verification_email.delay(email, code)  # Запускаем задачу Celery
-   
-            return Response(result, status=status.HTTP_201_CREATED)
 
-        
+        if success:
+            code = self.generate_verification_code()
+            email = user_data.get('email')
+
+            user = User.objects.get(email=email)
+            user.activation_code = code
+            user.activation_code_created_at = timezone.now()
+            user.is_active = False
+            user.save()
+
+            request.session['activation_email'] = email
+            print("Сохраненный email в сессии:", request.session.get('activation_email'))
+
+            send_verification_email.delay(email, code)
+            return Response(result, status=status.HTTP_201_CREATED)
 
         return Response(result, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserListView(APIView):
-    permission_classes = [IsAuthenticated]
-    def get(self, request, format=None):
-        users = User.objects.order_by('-date_joined').filter(is_active=True)
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
+class VerifyUser(APIView):
+    '''Verify user by activation code'''
+
+    def post(self, request, format='json'):
+        code = request.data.get('code')
+        email = request.session.get('activation_email')
+
+        if not code:
+            return Response({"message": "Код активации не указан."}, status=status.HTTP_400_BAD_REQUEST)
+
+        print("Полученный email из сессии:", email)
+        if not email:
+            return Response({"message": "Email не найден в сессии."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(email=email)
+            # Проверка времени действия кода активации
+            if user.activation_code_created_at:
+                time_diff = timezone.now() - user.activation_code_created_at
+                if time_diff.total_seconds() > 300:  # Код действителен 5 минут
+                    return Response({"message": "Код активации устарел."}, status=status.HTTP_400_BAD_REQUEST)
+            # Проверка кода активации
+            if user.activation_code == code:
+                user.is_active = True
+                user.activation_code = None
+                user.activation_code_created_at = None
+                user.save()
+                # Удаляем email из сессии после успешной активации
+                request.session.pop('activation_email', None)
+                return Response({"message": "Пользователь успешно активирован."}, status=status.HTTP_200_OK)
+            return Response({"message": "Неверный код активации."}, status=status.HTTP_400_BAD_REQUEST)
+
+        except User.DoesNotExist:
+            return Response({"message": "Пользователь не найден."}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ResendActivationCode(APIView):
+    '''Resend activation code'''
+
+    def generate_verification_code(self):
+        """Генерация случайного кода для подтверждения."""
+        return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+
+    def post(self, request, format='json'):
+        email = request.session.get('activation_email')
+
+        if not email:
+            return Response({"message": "Email не указан."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=email)
+            code = self.generate_verification_code()  # Генерация нового кода
+            user.activation_code = code
+            user.activation_code_created_at = timezone.now()  # Обновляем время создания кода
+            user.save()
+
+            # Сохраняем email в сессии, если нужно
+            request.session['activation_email'] = email
+
+            send_verification_email.delay(email, code)  # Отправляем новый код
+            return Response({"message": "Код активации повторно отправлен."}, status=status.HTTP_200_OK)
+
+        except User.DoesNotExist:
+            return Response({"message": "Пользователь не найден."}, status=status.HTTP_404_NOT_FOUND)
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        email = data.get('email')
+        password = data.get('password')
+        # проверяя, активен ли пользователь
+        try:
+            user = User.objects.get(email=email)
+            if not user.is_active:
+                return Response({"detail": "Пользователь не активирован."}, status=status.HTTP_403_FORBIDDEN)
+
+            if user.check_password(password):
+                return super().post(request, *args, **kwargs)
+            else:
+                return Response({"detail": "Неверный пароль."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        except User.DoesNotExist:
+            return Response({"detail": "Пользователь не найден."}, status=status.HTTP_404_NOT_FOUND)
+
 
 
 class MeView(APIView):
@@ -70,6 +150,13 @@ class BlacklistTokenUpdateView(APIView):
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
+class UserListView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, format=None):
+        users = User.objects.order_by('-date_joined').filter(is_active=True)
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+    
 
 class ProfileEditView(APIView):
     permission_classes = [IsAuthenticated]

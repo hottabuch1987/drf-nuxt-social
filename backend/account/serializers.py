@@ -35,6 +35,9 @@ class UserSerializer(serializers.ModelSerializer):
             'phone',
             'password',
             'photos',
+            'activation_code',
+            'activation_code_created_at',
+
         )
 
     def create(self, validated_data):

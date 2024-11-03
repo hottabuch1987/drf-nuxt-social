@@ -234,9 +234,24 @@ AUTHENTICATION_BACKENDS = (
 
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_NAME = 'my_app_session_id'
-SESSION_SAVE_EVERY_REQUEST = True
+SESSION_CACHE_ALIAS = 'default' 
 SESSION_COOKIE_AGE = 3600  # время в секундах 1 час
+SESSION_COOKIE_NAME = 'sessionid'  # Имя cookie для сессии
+SESSION_COOKIE_SAMESITE = None  # Позволяет использовать cookie с другими доменами
+SESSION_COOKIE_SECURE = False
+
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/0',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.mail.ru'  # SMTP Mail.ru

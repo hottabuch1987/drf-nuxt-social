@@ -85,8 +85,9 @@ export default {
   },
 
   methods: {
+    
     async submitForm() {
-      this.errors = [];
+      this.errors = []; // Сбрасываем ошибки
       this.loading = true; 
 
       if (this.form.email === '') {
@@ -106,12 +107,20 @@ export default {
           await this.fetchUserInfo(); // Получаем информацию о пользователе
         } catch (error) {
           console.log('Ошибка:', error);
-          this.errors.push('Электронная почта или пароль неверны!');
+
+          // Проверяем наличие ошибки от сервера
+          if (error.response && error.response.data) {
+            const serverMessage = error.response.data.detail || 'Ошибка аутентификации';
+            this.errors.push(serverMessage);
+          } else {
+            this.errors.push('Произошла ошибка при отправке запроса. Попробуйте позже.');
+          }
         }
       }
       
       this.loading = false; // Завершение загрузки
     },
+
 
     async fetchUserInfo() {
       try {
