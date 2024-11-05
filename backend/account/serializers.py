@@ -6,17 +6,22 @@ from .models import User, PhotoGallery
 
 class PhotoGallerySerializer(serializers.ModelSerializer):
     '''Serializer photo gallery'''
-
+    user = serializers.ReadOnlyField(source='user.username')
     class Meta:
         model = PhotoGallery
-        fields = ('id', 'image', 'created_at')
+        fields = ('id', 'image', 'created_at', 'get_image', 'user')
+        
+    def create(self, validated_data):
+        # Метод создаст новый объект PhotoGallery с автоматической привязкой пользователя
+        return PhotoGallery.objects.create(**validated_data)
+
+
 
 
 class UserSerializer(serializers.ModelSerializer):
     '''Serializer user'''
 
     password = serializers.CharField(write_only=True)
-    photos = PhotoGallerySerializer(many=True, read_only=True)
 
     class Meta:
         model = User
@@ -34,19 +39,23 @@ class UserSerializer(serializers.ModelSerializer):
             'gender', 
             'phone',
             'password',
-            'photos',
+      
+     
             'activation_code',
             'activation_code_created_at',
 
         )
 
-    def create(self, validated_data):
-        user = User.objects.create_user(
-            email=validated_data['email'],
-            password=validated_data['password'],
-            username=validated_data.get('username', None),
-        )
-        return user
+        def create(self, validated_data):
+            user = User.objects.create_user(
+                email=validated_data['email'],
+                password=validated_data['password'],
+                username=validated_data.get('username', None),
+            )
+
+            return user
+
+    
     
     
     
@@ -86,8 +95,8 @@ class ChangePasswordSerializer(serializers.Serializer):
     password = serializers.CharField(required=True)
 
 
-
 class UserListSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = User
         fields = (
@@ -101,5 +110,9 @@ class UserListSerializer(serializers.ModelSerializer):
             'phone', 
             'slug', 
             'date_joined', 
-            'birth_date'
-            )
+            'birth_date',
+         
+    
+        )
+
+

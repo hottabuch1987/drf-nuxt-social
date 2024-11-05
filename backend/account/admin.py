@@ -30,3 +30,4 @@ class UserAdmin(admin.ModelAdmin):
     inlines = [PhotoGalleryAdmin]
 
 
+admin.site.register(PhotoGallery)

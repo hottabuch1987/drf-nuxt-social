@@ -9,8 +9,8 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .models import User
-from .serializers import UserSerializer, ChangePasswordSerializer, EditUserSerializer, UserListSerializer
+from .models import User, PhotoGallery
+from .serializers import UserSerializer, ChangePasswordSerializer, EditUserSerializer, UserListSerializer, PhotoGallerySerializer
 from .tasks import send_verification_email
 from .services.user_service import UserService
 
@@ -130,7 +130,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             return Response({"detail": "Пользователь не найден."}, status=status.HTTP_404_NOT_FOUND)
 
 
-
 class MeView(APIView):
     '''Get current user'''
     permission_classes = [IsAuthenticated]
@@ -150,6 +149,7 @@ class BlacklistTokenUpdateView(APIView):
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 class UserListView(APIView):
     '''List all users'''
@@ -186,6 +186,34 @@ class ChangePasswordView(APIView):
             user.save()
             return Response({'message': 'Password updated successfully'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PhotoGalleryView(APIView):
+    '''Get photo gallery'''
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+      
+        photos = PhotoGallery.objects.all()
+        serializer = PhotoGallerySerializer(photos, many=True)
+        return Response(serializer.data)
+    
+    def post(self, request):
+        user = request.user
+        serializer = PhotoGallerySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk):         
+        try:
+            photo = PhotoGallery.objects.get(pk=pk, user=request.user)
+            photo.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except PhotoGallery.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class DeleteUserView(APIView):

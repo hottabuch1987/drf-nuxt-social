@@ -1,7 +1,7 @@
 <template>
 <div tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-00 rounded-box w-100">      
   <div class="rounded-lg bg-base-300 p-3 drop-shadow-xl divide-y divide-neutral">   
-     
+
     <ProfileCard :user="userStore.user" />
      <div aria-label="navigation" class="py-2">
         <nuxt-link :to="{'name': 'direct'}" class="flex items-center leading-6 space-x-3 py-3 px-4 w-full text-lg text-gray-600 focus:outline-none hover:bg-gray-100 rounded-md transition-transform duration-200 ease-in-out hover:scale-[1.01]">
@@ -39,8 +39,7 @@ export default {
         const userStore = useUserStore();
         const toastStore = useToastStore();
         const router = useRouter();
-        const orders = ref([]);
-        const showOrders = ref(false); 
+        ; 
 
         const logout = () => {
             userStore.removeToken();

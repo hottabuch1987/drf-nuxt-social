@@ -39,7 +39,7 @@
               <p class="text-3xl font-semibold text-black cursor-auto my-3" v-if="product.is_published">
                 <nuxt-link 
                   :to="`/posts/${product.slug}/`" 
-                  class="inline-block font-bold text-gray-600 hover:text-gray-800 transition-transform duration-300"
+                  class="inline-block text-sm  text-gray-600 hover:text-gray-800 transition-transform duration-300"
                 >
                   {{ product.name }}
                 </nuxt-link>

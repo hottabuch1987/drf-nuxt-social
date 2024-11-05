@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 import uuid
+from django.conf import settings
 
 class CustomUserManager(BaseUserManager):
     """Менеджер пользователя."""
@@ -82,3 +83,8 @@ class PhotoGallery(models.Model):
 
     def __str__(self):
         return f'Фото {self.id} пользователя {self.user.email}'
+    
+    def get_image(self):
+        if self.image:
+            return f'{settings.BASE_URL}{self.image.url}'
+        return ''

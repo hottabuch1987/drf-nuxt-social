@@ -12,11 +12,11 @@ export const useUserStore = defineStore({
             email: null,
             access: null,
             refresh: null,
+            avatar: null,
             first_name: null,
             last_name: null,
             bio: null,
             phone: null,
-            likedPosts: [] // Массив для хранения ID лайкнутых постов
         },
     }),
 
@@ -37,22 +37,20 @@ export const useUserStore = defineStore({
                     this.user.last_name = localStorage.getItem('user.last_name');
                     this.user.bio = localStorage.getItem('user.bio');
                     this.user.phone = localStorage.getItem('user.phone');
+                    this.user.avatar = localStorage.getItem('user.avatar');
                     this.user.isAuthenticated = true;
-         
+                 
+                    // console.log('Initialized user:this.user.is_trainer ', this.user.is_trainer );
 
                     this.refreshToken();
                     // console.log('Initialized user:', this.user);
 
-                    const likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || [];
-                    this.likedPosts = likedPosts; 
+                 
                     // console.log('Liked postssss:', this.likedPosts);
                 } 
             }
         },
-        
-  
 
-    
         setToken(data) {
             if (process.client) { // Проверка на клиенте
                 console.log('setToken', data);
@@ -77,11 +75,12 @@ export const useUserStore = defineStore({
                     email: null,
                     access: null,
                     refresh: null,
+                    avatar: null,
                     first_name: null,
                     last_name: null,
                     bio: null,
                     phone: null,
-               
+                
                 };
 
                 localStorage.removeItem('user.access');
@@ -93,7 +92,8 @@ export const useUserStore = defineStore({
                 localStorage.removeItem('user.last_name');
                 localStorage.removeItem('user.bio');
                 localStorage.removeItem('user.phone');
-              
+                localStorage.removeItem('user.avatar');
+               
             }
         },
 
@@ -111,6 +111,7 @@ export const useUserStore = defineStore({
                 this.user.last_name = user.last_name;
                 this.user.bio = user.bio;
                 this.user.phone = user.phone;
+                this.user.avatar = user.avatar;
         
 
                 localStorage.setItem('user.id', this.user.id);
@@ -120,7 +121,8 @@ export const useUserStore = defineStore({
                 localStorage.setItem('user.last_name', this.user.last_name);
                 localStorage.setItem('user.bio', this.user.bio);
                 localStorage.setItem('user.phone', this.user.phone);
-    
+                localStorage.setItem('user.avatar', this.user.avatar);
+         
             }
         },
 
@@ -141,6 +143,17 @@ export const useUserStore = defineStore({
             });
         },
 
-       
+        setAvatar(avatarUrl) {
+            if (process.client) { // Проверка на клиенте
+                this.user.avatar = avatarUrl;
+                localStorage.setItem('user.avatar', avatarUrl);
+            }
+        },
+        removeAvatar() {
+                if (process.client) {
+                    this.user.avatar = null; // Сброс аватара в состояние
+                    localStorage.removeItem('user.avatar'); // Удаление из localStorage
+            }
+        }
     },
 });
