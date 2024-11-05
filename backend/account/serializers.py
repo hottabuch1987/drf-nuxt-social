@@ -22,6 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
     '''Serializer user'''
 
     password = serializers.CharField(write_only=True)
+    photos = PhotoGallerySerializer(many=True, read_only=True)
 
     class Meta:
         model = User
@@ -40,9 +41,10 @@ class UserSerializer(serializers.ModelSerializer):
             'phone',
             'password',
       
-     
+            'photos',
             'activation_code',
             'activation_code_created_at',
+      
 
         )
 
@@ -96,7 +98,7 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 
 class UserListSerializer(serializers.ModelSerializer):
-
+    photos = PhotoGallerySerializer(many=True, read_only=True)
     class Meta:
         model = User
         fields = (
@@ -111,6 +113,7 @@ class UserListSerializer(serializers.ModelSerializer):
             'slug', 
             'date_joined', 
             'birth_date',
+            'photos',
          
     
         )

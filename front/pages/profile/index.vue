@@ -21,7 +21,7 @@
           >
             <nuxt-link :to="`/profile/${user.slug}`">
               <span class="text-gray-400 mr-3 uppercase text-xs">{{ user.username }}</span>
-              <img v-if="user.avatar" :src="user.avatar" alt="Users" class="h-80 w-72 object-cover rounded-t-xl" />
+              <img v-if="user.photos" v-for="photo in user.photos" :key="photo.id" :src="photo.get_image" alt="Users" class="h-80 w-72 object-cover rounded-t-xl" />
               <img class="h-80 w-72 rounded-full border-4 border-white dark:border-gray-800 mx-auto my-4" v-else src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar User">
               <div class="px-4 py-3 w-72">
                 <span class="text-gray-400 mr-3 uppercase text-xs" v-if="user.birth_date">{{formatDate(user.birth_date)}} {{ user.gender }} </span>

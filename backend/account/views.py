@@ -195,7 +195,7 @@ class PhotoGalleryView(APIView):
 
     def get(self, request):
       
-        photos = PhotoGallery.objects.all()
+        photos = PhotoGallery.objects.filter(user=request.user)
         serializer = PhotoGallerySerializer(photos, many=True)
         return Response(serializer.data)
     

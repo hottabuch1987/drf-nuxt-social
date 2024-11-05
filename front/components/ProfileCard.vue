@@ -52,7 +52,7 @@
             </div>
           </div>
         </div>
-        <button v-if="photos.length > 1" @click="prevSlide" class="left-2 transform -translate-y-1/2 w-[60px] h-[60px] bg-lime-600 text-white rounded-full shrink-0  p-2">
+        <button v-if="photos.length > 1" @click="prevSlide" class="left-2 transform -translate-y-1/2 w-[60px] h-[60px] bg-gray-300 text-white rounded-full shrink-0  p-2">
           →
         </button>
 
