@@ -25,6 +25,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
+   
+
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message_content = text_data_json['message']
@@ -40,10 +42,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'chat_message',
                 'content': message_content,
-                'sender_id': user_id,
+                'sender_id': str(user_id),  # Преобразуем в строку
                 'timestamp': message.timestamp.isoformat(),
             }
         )
+
+        # Отправляем уведомление о новом сообщении
+        await self.channel_layer.group_send(
+            self.dialog_group_name,
+            {
+                'type': 'new_message_notification',
+                'sender_id': str(user_id),  # Преобразуем в строку
+                'message_id': str(message.id),  # Преобразуем в строку, если нужно
+            }
+        )
+
+
+
+
 
     @database_sync_to_async
     def get_dialog(self, dialog_id):
@@ -70,3 +86,42 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'sender_id': sender_id,
             'timestamp': timestamp,
         }))
+
+
+    async def new_message_notification(self, event):
+    # Логика для отправки уведомления
+        notification_message = f"Новое сообщение от {event['sender_id']}!"
+        print(notification_message)  # Выводим уведомление в консоль для отладки
+        await self.send(text_data=json.dumps({
+            'notification': notification_message,
+            'message_id': event['message_id'],
+        }))
+
+
+
+
+
+
+
+    # async def receive(self, text_data):
+    #     text_data_json = json.loads(text_data)
+    #     message_content = text_data_json['message']
+    #     user_id = text_data_json['user_id']  # ID отправителя
+
+    #     # Получаем диалог и создаем сообщение в базе данных
+    #     dialog = await self.get_dialog(self.dialog_id)
+    #     message = await self.create_message(dialog, user_id, message_content)
+
+    #     # Отправляем сообщение в группу
+    #     await self.channel_layer.group_send(
+    #         self.dialog_group_name,
+    #         {
+    #             'type': 'chat_message',
+    #             'content': message_content,
+    #             'sender_id': user_id,
+    #             'timestamp': message.timestamp.isoformat(),
+    #         }
+    #     )
+
+
+

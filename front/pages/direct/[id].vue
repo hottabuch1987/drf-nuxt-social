@@ -2,6 +2,9 @@
   <div class="max-w-6xl mx-auto p-4">
     <div class="text-2xl text-gray-400 font-semibold mb-4">Мои сообщения</div>
     <div class="h-screen flex flex-col">
+      <div v-if="notification" class="bg-yellow-200 p-2 text-center">
+        {{ notification }}
+      </div>
       <div class="bg-gray-200 flex-1 overflow-y-scroll">
         <div v-for="msg in messages" :key="msg.id" class="px-2 py-2">
           <div class="flex items-center mb-4" v-if="msg.sender.id === userStore.user.id">
@@ -43,8 +46,10 @@
   </div>
 </template>
 
+
 <script>
 import { useUserStore } from '@/stores/user';
+import { useToastStore } from '@/stores/toast';
 import axios from 'axios';
 
 export default {
@@ -54,12 +59,14 @@ export default {
       newMessage: '',
       dialogId: null,
       socket: null, // Сохранение соединения с веб-сокетом
+      notification: '',
     };
   },
 
   setup() {
     const userStore = useUserStore();
-    return { userStore };
+    const toastStore = useToastStore();
+    return { userStore, toastStore };
   },
 
   mounted() {
@@ -92,15 +99,23 @@ export default {
       this.socket = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${dialogId}/`);
 
       this.socket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        
-        // Добавляем сообщение к текущим сообщениям
-        this.messages.push({
-          content: data.message,
-          sender: { id: data.sender_id, username: data.sender_username }, // sender_username передается
-          timestamp: data.timestamp,
-        });
+          const data = JSON.parse(event.data);
+          
+          if (data.notification) {
+              // Вы можете отобразить уведомление пользователю с помощью UI
+              // alert(data.notification);  // Простой способ, можно улучшить!
+              // this.notification = data.notification;
+              this.toastStore.showToast(8000, data.notification, 'bg-green-500');
+          } else {
+              // Добавляем сообщение к текущим сообщениям
+              this.messages.push({
+                  content: data.message,
+                  sender: { id: data.sender_id, username: data.sender_username }, // sender_username передается
+                  timestamp: data.timestamp,
+              });
+          }
       };
+
 
       this.socket.onclose = (event) => {
         console.log('WebSocket closed:', event);
