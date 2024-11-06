@@ -1,12 +1,12 @@
 from django.urls import path, include
-from .views import UserListView, CustomUserCreate, MeView, ProfileEditView, ChangePasswordView, DeleteUserView, UserDetail, VerifyUser, ResendActivationCode, PhotoGalleryView
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from .views import UserListView, CustomUserCreate, MeView, ProfileEditView, ChangePasswordView, DeleteUserView, UserDetail, VerifyUser, ResendActivationCode, PhotoGalleryView, CustomTokenObtainPairView
+from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
 
 urlpatterns = [
     path('create/', CustomUserCreate.as_view(), name="create_user"),
     path('verify/', VerifyUser.as_view(), name='verify_user'),
-    path('login/', TokenObtainPairView.as_view(), name='token_obtain'),
+    path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain'),
     path('resend-code/', ResendActivationCode.as_view(), name='resend-code'),
     path('account/', MeView.as_view(), name='account'),
     path('edit-account/', ProfileEditView.as_view(), name='edit-account'),

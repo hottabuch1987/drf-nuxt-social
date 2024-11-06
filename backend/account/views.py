@@ -130,6 +130,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             return Response({"detail": "Пользователь не найден."}, status=status.HTTP_404_NOT_FOUND)
 
 
+
 class MeView(APIView):
     '''Get current user'''
     permission_classes = [IsAuthenticated]
@@ -149,7 +150,6 @@ class BlacklistTokenUpdateView(APIView):
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
 
 class UserListView(APIView):
     '''List all users'''
@@ -187,7 +187,6 @@ class ChangePasswordView(APIView):
             return Response({'message': 'Password updated successfully'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 class PhotoGalleryView(APIView):
     '''Get photo gallery'''
 
@@ -195,7 +194,7 @@ class PhotoGalleryView(APIView):
 
     def get(self, request):
       
-        photos = PhotoGallery.objects.filter(user=request.user)
+        photos = PhotoGallery.objects.all()
         serializer = PhotoGallerySerializer(photos, many=True)
         return Response(serializer.data)
     
