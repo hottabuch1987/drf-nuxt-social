@@ -19,21 +19,30 @@
             :key="user.id"
             class="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl"
           >
-            <nuxt-link :to="`/profile/${user.slug}`">
-              <span class="text-gray-400 mr-3 uppercase text-xs">{{ user.username }}</span>
-              <img v-if="user.photos" v-for="photo in user.photos" :key="photo.id" :src="photo.get_image" alt="Users" class="h-80 w-72 object-cover rounded-t-xl" />
-              <img class="h-80 w-72 rounded-full border-4 border-white dark:border-gray-800 mx-auto my-4" v-else src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar User">
-              <div class="px-4 py-3 w-72">
-                <span class="text-gray-400 mr-3 uppercase text-xs" v-if="user.birth_date">{{formatDate(user.birth_date)}} {{ user.gender }} </span>
-                <p class="text-lg font-bold text-black truncate block capitalize"></p>
-                <div class="flex items-center">
-                  <p class="text-sm font-semibold text-black cursor-auto my-3">
-                    <nuxt-link :to="`/profile/${user.slug}`" class="font-bold text-red-600">{{user.last_name}} {{ user.first_name }}</nuxt-link>
-                  </p>
-                  
-                </div>
+          <nuxt-link :to="`/profile/${user.slug}`">
+            <span class="text-gray-400 mr-3 uppercase text-xs">{{ user.username }}</span>
+
+            <div>
+              <img v-if="user.photos.length > 0 && user.photos[user.photos.length - 1].get_image" 
+                  :src="user.photos[user.photos.length - 1].get_image" 
+                  alt="Users" 
+                  class="h-80 w-72 object-cover rounded-t-xl" />
+              <img v-else src="https://cdn-icons-png.flaticon.com/512/149/149071.png" 
+                  alt="Avatar User" 
+                  class="h-80 w-72 rounded-full border-4 border-white dark:border-gray-800 mx-auto my-4" />
+            </div>
+
+            <div class="px-4 py-3 w-72">
+              <span class="text-gray-400 mr-3 uppercase text-xs" v-if="user.birth_date">{{formatDate(user.birth_date)}} {{ user.gender }} </span>
+              <p class="text-lg font-bold text-black truncate block capitalize"></p>
+              <div class="flex items-center">
+                <p class="text-sm font-semibold text-black cursor-auto my-3">
+                  <nuxt-link :to="`/profile/${user.slug}`" class="font-bold text-red-600">{{user.last_name}} {{ user.first_name }}</nuxt-link>
+                </p>
               </div>
-            </nuxt-link>
+            </div>
+          </nuxt-link>
+
           </div>
         </section>
       </div>

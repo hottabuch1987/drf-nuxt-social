@@ -19,12 +19,13 @@
                     <span class="text-6xl font-semibold text-orange-500">Poster</span> 
                 </div>
             </div>
-            <span class="sm:text-sm text-xs m-6 text-gray-400">сайт для переписки и общения © 2024</span>
             <span class="sm:text-sm text-xs m-6 text-gray-400">
+  
                 <nuxt-link :to="{ name: 'about' }">
-                    Политика конфиденциальности | Условия использования
+                    Условия использования | © 2024
                 </nuxt-link>
-            </span>  
+            </span>
+ 
 
     </footer>
 </template>
