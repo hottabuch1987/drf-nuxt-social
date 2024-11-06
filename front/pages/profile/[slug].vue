@@ -48,18 +48,34 @@
     </div>
   </div>
 
-  <div v-if="isModalOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70" @click.self="closeModal">
-    <div class="bg-white p-5 rounded shadow-lg relative max-w-md">
-      <button @click="closeModal" class="absolute top-2 right-2 text-gray-600 hover:text-gray-900">✖</button>
-      <div class="flex flex-col space-y-4">
-        <h2 class="text-xl font-bold">Все фотографии пользователя</h2>
-        <div v-for="photo in user.photos" :key="photo.id">
-          <img v-if="photo.get_image" :src="photo.get_image" alt="User Photo" class="w-full object-cover mb-2" />
-          <img v-else src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar User" class="w-full object-cover mb-2" />
-        </div>
-      </div>
+  <!-- Модальное окно с каруселью фотографий -->
+  <!-- Модальное окно с каруселью фотографий -->
+<div v-if="isModalOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70" @click.self="closeModal">
+  <div class="relative bg-white p-5 rounded shadow-lg max-w-md">
+    <button @click="closeModal" class="absolute top-2 right-2 text-gray-600 hover:text-gray-900">✖</button>
+    
+    <h2 class="text-xl font-bold text-center">Все фотографии пользователя</h2>
+    <div class="flex items-center justify-between mt-4">
+      <button 
+        @click="prevPhoto" 
+        class="px-2 py-1 bg-gray-300 rounded" 
+        v-if="currentPhotoIndex > 0">←</button>
+
+      <img 
+        v-if="user.photos[currentPhotoIndex]" 
+        :src="user.photos[currentPhotoIndex].get_image" 
+        alt="User Photo" 
+        class="w-full object-cover mb-2"
+      />
+
+      <button 
+        @click="nextPhoto" 
+        class="px-2 py-1 bg-gray-300 rounded" 
+        v-if="currentPhotoIndex < user.photos.length - 1">→</button>
     </div>
   </div>
+</div>
+
 </template>
 
 <script>
@@ -78,6 +94,7 @@ export default {
       toastStore: useToastStore(),
       directId: null,
       isModalOpen: false,
+      currentPhotoIndex: 0, // Состояние для текущего индекса фото
     };
   },
   async mounted() {
@@ -87,12 +104,25 @@ export default {
   methods: {
     openModal() {
       this.isModalOpen = true;
+      this.currentPhotoIndex = 0; // Сброс индекса при открытии
     },
     
     closeModal() {
       this.isModalOpen = false;
     },
-   
+    
+    prevPhoto() {
+      if (this.currentPhotoIndex > 0) {
+        this.currentPhotoIndex -= 1;
+      }
+    },
+
+    nextPhoto() {
+      if (this.currentPhotoIndex < this.user.photos.length - 1) {
+        this.currentPhotoIndex += 1;
+      }
+    },
+  
     async getUser(slug) {
       try {
         const response = await axios.get(`/user/${slug}`);
@@ -138,3 +168,7 @@ export default {
   },
 };
 </script>
+
+<style>
+/* Добавьте базовые стили для карусели по вашему усмотрению */
+</style>
