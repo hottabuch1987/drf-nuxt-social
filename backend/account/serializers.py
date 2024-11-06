@@ -40,6 +40,7 @@ class UserSerializer(serializers.ModelSerializer):
             'gender', 
             'phone',
             'password',
+            'is_online',
       
             'photos',
             'activation_code',
@@ -114,6 +115,7 @@ class UserListSerializer(serializers.ModelSerializer):
             'date_joined', 
             'birth_date',
             'photos',
+            'is_online',
          
     
         )

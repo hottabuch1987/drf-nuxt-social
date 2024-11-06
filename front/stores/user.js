@@ -150,9 +150,9 @@ export const useUserStore = defineStore({
             }
         },
         removeAvatar() {
-                if (process.client) {
-                    this.user.avatar = null; // Сброс аватара в состояние
-                    localStorage.removeItem('user.avatar'); // Удаление из localStorage
+            if (process.client) {
+                this.user.avatar = null; // Сброс аватара в состояние
+                localStorage.removeItem('user.avatar'); // Удаление из localStorage
             }
         }
     },

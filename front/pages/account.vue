@@ -3,6 +3,10 @@
   <div class="rounded-lg bg-base-300 p-3 drop-shadow-xl divide-y divide-neutral">   
 
     <ProfileCard :user="userStore.user" />
+    <div v-for="(status, username) in onlineStatus" :key="username" class="status-message space-x-3 py-3 px-4">
+            <span v-if="status === 'online'" class="text-green-500">Online</span>
+            <span v-else class="text-red-500">Offline</span>
+    </div>
      <div aria-label="navigation" class="py-2">
         <nuxt-link :to="{'name': 'direct'}" class="flex items-center leading-6 space-x-3 py-3 px-4 w-full text-lg text-gray-600 focus:outline-none hover:bg-gray-100 rounded-md transition-transform duration-200 ease-in-out hover:scale-[1.01]">
             <svg class="w-7 h-7" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
@@ -39,7 +43,30 @@ export default {
         const userStore = useUserStore();
         const toastStore = useToastStore();
         const router = useRouter();
-        ; 
+        const onlineStatus = ref({});
+        let socket;
+
+        const connectWebSocket = () => {
+        socket = new WebSocket(`ws://localhost:8000/ws/user-status/`);
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            onlineStatus.value[data.username] = data.status; // Обновляем статус пользователя
+        };
+
+        socket.onclose = () => {
+            console.log('WebSocket connection closed');
+            };
+        };
+        onMounted(() => {
+            connectWebSocket();
+        });
+
+        onBeforeUnmount(() => {
+            if (socket) {
+                socket.close();
+            }
+        });
 
         const logout = () => {
             userStore.removeToken();
@@ -47,7 +74,7 @@ export default {
             router.push({ name: 'login' });
         };
 
-      
+        
 
         const formatDate = (dateString) => {
             return DateTime.fromISO(dateString).toLocaleString(DateTime.DATETIME_MED);
@@ -59,6 +86,7 @@ export default {
             userStore,
             formatDate,
             logout,
+            onlineStatus,
         };
     },
 
