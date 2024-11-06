@@ -3,6 +3,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Message, Dialog
+from .tasks import send_new_message_notification
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -55,6 +56,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             sender_id=user_id,
             content=content
         )
+        send_new_message_notification.delay(message.id)
         return message
 
     async def chat_message(self, event):
