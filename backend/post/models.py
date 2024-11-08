@@ -2,6 +2,8 @@ from django.db import models
 from account.models import User
 from django.conf import settings
 from slugify import slugify
+from django.utils import timezone
+
 
 
 class Category(models.Model):
@@ -92,3 +94,15 @@ class Product(models.Model):
     
 
 
+class FavoriteProduct(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorite_products', verbose_name="Пользователь")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='favorited_by', verbose_name="Продукт")
+    date_added = models.DateTimeField(default=timezone.now) 
+    class Meta:
+        unique_together = (('user', 'product'),)
+        verbose_name = 'Избранное: продукты и пользователи'
+        verbose_name_plural = 'Избранное: продукты и пользователи'
+        ordering = ('-date_added',)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.product.name}"

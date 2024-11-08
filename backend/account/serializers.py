@@ -12,6 +12,8 @@ class PhotoGallerySerializer(serializers.ModelSerializer):
         fields = ('id', 'image', 'created_at', 'get_image', 'user')
         
     def create(self, validated_data):
+        # request = self.context.get('request')  # Получаем текущий запрос
+        # validated_data['user'] = request.user  # Устанавливаем текущего пользователя
         # Метод создаст новый объект PhotoGallery с автоматической привязкой пользователя
         return PhotoGallery.objects.create(**validated_data)
 

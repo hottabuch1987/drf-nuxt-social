@@ -1,12 +1,16 @@
 from django.db.models import Q
+from rest_framework import viewsets
 from django.http import Http404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import  status
 from rest_framework.permissions import IsAuthenticated
-from .serializers import ProductSerializer, CategorySerializer
-from .models import Product, Category
+from rest_framework.decorators import action
+from django.shortcuts import get_object_or_404
+
+from .serializers import ProductSerializer, CategorySerializer, FavoriteProductSerializer
+from .models import Product, Category, FavoriteProduct
 #from .tasks import send_order_email, delete_order
 
 
@@ -241,3 +245,40 @@ def search(request):
     
 
 #
+class FavoriteProductView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Получаем все избранные продукты для данного пользователя
+        favorites = FavoriteProduct.objects.filter(user=request.user)
+        serializer = FavoriteProductSerializer(favorites, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        # Логика добавления в избранное
+        product_id = request.data.get("product_id")
+        if not product_id:
+            return Response({"error": "Product ID not provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+        favorite_product, created = FavoriteProduct.objects.get_or_create(user=request.user, product_id=product_id)
+
+        if created:
+            return Response({"message": "Product added to favorites."}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Product already in favorites."}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        # Логика удаления из избранного
+        product_id = request.data.get("product_id")
+        if not product_id:
+            return Response({"error": "Product ID not provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            favorite_product = FavoriteProduct.objects.get(user=request.user, product_id=product_id)
+            favorite_product.delete()
+            return Response({"message": "Product removed from favorites."}, status=status.HTTP_204_NO_CONTENT)
+        except FavoriteProduct.DoesNotExist:
+            return Response({"error": "Product not found in favorites."}, status=status.HTTP_404_NOT_FOUND)
+
+
+# {"user": "39b8b512-eadc-46f9-9bcc-646c6df84b00",
+# "product_id": 17}

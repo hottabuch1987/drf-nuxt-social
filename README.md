@@ -12,4 +12,4 @@
 ### redis-server
 ### celery -A config worker --loglevel=info
 ### celery -A config flower
-
+### redis-cli shutdown

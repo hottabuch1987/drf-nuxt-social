@@ -17,7 +17,8 @@
             <span>Мои сообщения</span>
         </nuxt-link>
         <MyProgramm />
-        
+        <FavoriteProducts />
+
         <EditAccountLink />
         <ChangePasswordLink />
         <LogoutButton @logout="logout"/>

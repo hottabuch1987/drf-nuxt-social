@@ -93,7 +93,7 @@ export default {
 
     connectWebSocket(dialogId) {
       // Подключение к веб-сокету
-      this.socket = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${dialogId}/`);
+      this.socket = new WebSocket(`ws://localhost:8000/ws/chat/${dialogId}/`);
 
       this.socket.onmessage = (event) => {
           const data = JSON.parse(event.data);

@@ -193,21 +193,23 @@ class PhotoGalleryView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-      
-        photos = PhotoGallery.objects.all()
+        # Получаем только фотографии текущего пользователя
+        photos = PhotoGallery.objects.filter(user=request.user)
         serializer = PhotoGallerySerializer(photos, many=True)
         return Response(serializer.data)
-    
+
     def post(self, request):
         user = request.user
         serializer = PhotoGallerySerializer(data=request.data)
         if serializer.is_valid():
+            # Указываем пользователя при сохранении
             serializer.save(user=user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     def delete(self, request, pk):         
         try:
+            # Убедитесь, что удаляем только ту фотографию, которая принадлежит текущему пользователю
             photo = PhotoGallery.objects.get(pk=pk, user=request.user)
             photo.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)

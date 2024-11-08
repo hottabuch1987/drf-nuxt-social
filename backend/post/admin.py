@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Category, Product
+from .models import Category, Product, FavoriteProduct
 
 
 @admin.register(Category)
@@ -17,4 +17,11 @@ class ProductAdmin(admin.ModelAdmin):
     list_editable = ['is_published']
     prepopulated_fields = {'slug':('name',)}
     date_hierarchy ='date_added'
+
+
+@admin.register(FavoriteProduct)
+class FavoriteProductAdmin(admin.ModelAdmin):
+    list_display = ('user', 'product', 'date_added')
+    search_fields = ('user__username', 'product__name')
+    list_filter = ('user',)  # фильтруем по пользователю
 
