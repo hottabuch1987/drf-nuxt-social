@@ -2,10 +2,10 @@
   <div class="page">
     <AppHeader />
     
-
+    
+    <Toast />
     <main class="main mt-12">
-      <Toast />
-
+      
       <slot></slot>
     </main>
 

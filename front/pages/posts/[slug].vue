@@ -19,6 +19,7 @@
       <h3 class="text-lg font-medium font-bold text-red-600 mb-2">    {{ cat.description }}</h3>
       <p class="text-gray-600 text-sm mb-4"></p>
       <div class="flex items-center justify-between">
+        <button class="mt-4 bg-white border border-red-500 hover:bg-red-200 text-red-500 font-bold py-2 px-4 rounded" @click="addFromFavorites(cat.id)">В избранное</button>
        
         
         <nuxt-link class="text-gray-400 mr-3 uppercase text-xs hover:text-red-600" v-if="userStore.user.username"
@@ -61,8 +62,8 @@
 
 <script>
 import axios from 'axios';
-import { loadStripe } from '@stripe/stripe-js';
 import { useUserStore } from '@/stores/user';
+import { useToastStore } from '@/stores/toast';
 import Spinner from '@/components/Spinner.vue';
 import { useRuntimeConfig } from '#app'; 
 
@@ -81,7 +82,8 @@ export default {
   setup() {
     const userStore = useUserStore();
     const config = useRuntimeConfig();
-    return { userStore, config };
+    const toastStore = useToastStore();
+    return { userStore, config, toastStore };
   },
   async mounted() {
     await this.getUser(this.$route.params.slug);
@@ -103,10 +105,29 @@ export default {
         this.loading = false;
       }
     },
+    async addFromFavorites(id) {
+      try {
+        const response = await axios.post('/favorites/', { product_id: id, user: this.userStore.user.id });
+        
+        // Успешное добавление товара в избранное
+        if (response.status === 201) {
+          this.toastStore.showToast(5000, 'Товар добавлен в избранное!', 'bg-green-500');
+        } else {
+          // Если товар уже добавлен, обрабатываем сообщением
+          this.toastStore.showToast(5000, 'Товар уже добавлен в избранное!', 'bg-green-500');
+        }
 
-    
-
-  
+      } catch (error) {
+        if (error.response && error.response.status === 400) {
+          // Обработка случая, когда не предоставлен ID товара
+          this.toastStore.showToast(5000, 'Ошибка: ID товара не предоставлен.', 'bg-red-500');
+        } else {
+          // Другие ошибки
+          console.error('Error adding to favorites:', error);
+          this.toastStore.showToast(5000, 'Ошибка при добавлении в избранное.', 'bg-red-500');
+        }
+      }
+    }
 
   }
 };

@@ -254,6 +254,7 @@ class FavoriteProductView(APIView):
         serializer = FavoriteProductSerializer(favorites, many=True)
         return Response(serializer.data)
 
+    
     def post(self, request):
         # Логика добавления в избранное
         product_id = request.data.get("product_id")
@@ -264,7 +265,7 @@ class FavoriteProductView(APIView):
 
         if created:
             return Response({"message": "Product added to favorites."}, status=status.HTTP_201_CREATED)
-        return Response({"message": "Product already in favorites."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "Product already in favorites."}, status=status.HTTP_200_OK)  # Измените статус на 200
 
     def delete(self, request):
         # Логика удаления из избранного

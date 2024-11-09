@@ -53,6 +53,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class FavoriteProductSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
     class Meta:
         model = FavoriteProduct
         fields = [
