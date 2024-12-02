@@ -32,3 +32,11 @@
 <img src="https://github.com/hottabuch1987/drf-nuxt-social/raw/main/img/6.png" alt="6">
 
 <img src="https://github.com/hottabuch1987/drf-nuxt-social/raw/main/img/7.png" alt="7">
+
+<img src="https://github.com/hottabuch1987/drf-nuxt-social/raw/main/img/8.png" alt="8">
+
+<img src="https://github.com/hottabuch1987/drf-nuxt-social/raw/main/img/9.png" alt="9">
+
+<img src="https://github.com/hottabuch1987/drf-nuxt-social/raw/main/img/10.png" alt="10">
+
+<img src="https://github.com/hottabuch1987/drf-nuxt-social/raw/main/img/11.png" alt="11">
