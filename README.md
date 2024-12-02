@@ -9,8 +9,8 @@
 ##### python manage.py runserver
 ##### redis-server
 
-### celery -A config worker --loglevel=info
-### celery -A config flower
+##### celery -A config worker --loglevel=info
+##### celery -A config flower
 
 
 ### FRONTEND
