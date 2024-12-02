@@ -165,3 +165,6 @@ logs
 front/node_modules
 front/node_modules/
 #front/.env
+
+db.sqlite3
+dump.rdb
