@@ -5,13 +5,13 @@ from slugify import slugify
 from django.utils import timezone
 
 
-
 class Category(models.Model):
+    '''Модель для хранения категорий продуктов.'''
+
     owner = models.ForeignKey(User, related_name='categories', on_delete=models.CASCADE, verbose_name='Владелец категории')
     name = models.CharField(max_length=255, verbose_name='Название категории')
     slug = models.SlugField(verbose_name='слаг')
     date_added = models.DateTimeField(auto_now_add=True, verbose_name='дата добавления')
-    
 
     def save(self, *args, **kwargs):
         # Проверяем, изменилось ли имя категории
@@ -38,11 +38,10 @@ class Category(models.Model):
     def get_absolute_url(self):
         return f'/{self.slug}/'
     
-  
-    
-
 
 class Product(models.Model):
+    '''Модель для хранения продуктов.'''
+
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE, verbose_name='категория')
     name = models.CharField(max_length=255, verbose_name='имя')
     slug = models.SlugField(verbose_name='слаг')
@@ -69,8 +68,6 @@ class Product(models.Model):
 
         super().save(*args, **kwargs)
 
-
-
     class Meta:
         verbose_name = 'Пост'
         verbose_name_plural = 'Посты'
@@ -91,10 +88,11 @@ class Product(models.Model):
         if self.video:
             return f'{settings.BASE_URL}{self.video.url}'
         return ''
-    
 
 
 class FavoriteProduct(models.Model):
+    '''Модель для хранения избранных продуктов и пользователей'''
+    
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorite_products', verbose_name="Пользователь")
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='favorited_by', verbose_name="Продукт")
     date_added = models.DateTimeField(default=timezone.now) 

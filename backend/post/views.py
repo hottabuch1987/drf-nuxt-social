@@ -1,19 +1,14 @@
 from django.db.models import Q
-from rest_framework import viewsets
 from django.http import Http404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import  status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
-
 from .serializers import ProductSerializer, CategorySerializer, FavoriteProductSerializer
 from .models import Product, Category, FavoriteProduct
 #from .tasks import send_order_email, delete_order
-
-
 
 
 class LatesProductsList(APIView):
@@ -41,7 +36,6 @@ class CategoryList(APIView):
         categories = Category.objects.order_by("-date_added")
         serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data)
-    
 
     def get_categories(self, request):
         query = request.GET.get('search', '')
@@ -50,11 +44,9 @@ class CategoryList(APIView):
         else:
             return Category.objects.order_by("-date_added")
 
-
     def search_categories(self, query):
         # Фильтруем категории по названию или другому атрибуту
         return Category.objects.filter(name__icontains=query).order_by("-date_added")
-
 
 
 class CategoryDetail(APIView):
@@ -71,7 +63,6 @@ class CategoryDetail(APIView):
     
 
 class CategoryUserView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
@@ -80,8 +71,6 @@ class CategoryUserView(APIView):
         programs = Category.objects.filter(owner=user)
         serializer = CategorySerializer(programs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 
     def post(self, request, format=None):
         user = request.user
@@ -109,7 +98,6 @@ class DetailCategoryUserView(APIView):
 
     def get(self, request, slug, format=None):
         user = request.user
-
         try:
             category = Category.objects.get(slug=slug, owner=user)
             serializer = CategorySerializer(category)
@@ -117,7 +105,6 @@ class DetailCategoryUserView(APIView):
 
         except Category.DoesNotExist:
             return Response({'error': 'Программа не найдена или вы не имеете права её просматривать.'}, status=status.HTTP_404_NOT_FOUND)
-
 
     def put(self, request, slug, format=None):
         user = request.user
@@ -153,7 +140,6 @@ class DetailCategoryUserView(APIView):
 
     def delete(self, request, slug, format=None):
         user = request.user
-
         try:
             category = Category.objects.get(slug=slug, owner=user)
             category.delete()
@@ -162,22 +148,19 @@ class DetailCategoryUserView(APIView):
         except Category.DoesNotExist:
             return Response({'error': 'Программа не найдена или вы не имеете права её удалять.'}, status=status.HTTP_404_NOT_FOUND)
         
-class ProductUserView(APIView):
 
+class ProductUserView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         user = request.user
         products = Product.objects.filter(category__owner=user)
         serializer = ProductSerializer(products, many=True)
-
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
     def post(self, request, format=None):
         user = request.user
         # Получаем ID категории из запроса
         category_id = request.data.get('category_id')
-
         try:
             category = Category.objects.get(id=category_id, owner=user)
             serializer = ProductSerializer(data=request.data, partial=True)
@@ -196,7 +179,6 @@ class ProductUserView(APIView):
 class DetailProductUserView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, slug, format=None):
-
         try:
             products = Product.objects.get(slug=slug)
             print(products, 'products')
@@ -207,7 +189,6 @@ class DetailProductUserView(APIView):
 
 
     def put(self, request, slug, format=None):
-
         try:
             product = Product.objects.get(slug=slug)
             serializer = ProductSerializer(product, data=request.data, partial=True)
@@ -223,7 +204,6 @@ class DetailProductUserView(APIView):
 
 
     def delete(self, request, slug, format=None):
-
         try:
             product = Product.objects.get(slug=slug)
             product.delete()
@@ -242,9 +222,8 @@ def search(request):
         return Response(serializer.data)
     else:
         return Response({'products':[]})
-    
 
-#
+
 class FavoriteProductView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -254,7 +233,6 @@ class FavoriteProductView(APIView):
         serializer = FavoriteProductSerializer(favorites, many=True)
         return Response(serializer.data)
 
-    
     def post(self, request):
         # Логика добавления в избранное
         product_id = request.data.get("product_id")
@@ -280,6 +258,3 @@ class FavoriteProductView(APIView):
         except FavoriteProduct.DoesNotExist:
             return Response({"error": "Product not found in favorites."}, status=status.HTTP_404_NOT_FOUND)
 
-
-# {"user": "39b8b512-eadc-46f9-9bcc-646c6df84b00",
-# "product_id": 17}

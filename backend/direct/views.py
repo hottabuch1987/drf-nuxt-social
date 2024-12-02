@@ -9,8 +9,10 @@ from account.models import User
 from rest_framework import status
 from rest_framework.response import Response
 
+
 class DialogListCreateView(generics.ListCreateAPIView):
     """Представление для получения списка и создания диалогов."""
+
     permission_classes = [IsAuthenticated]
     serializer_class = DialogSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -24,17 +26,14 @@ class DialogListCreateView(generics.ListCreateAPIView):
         return Dialog.objects.filter(Q(user1=user) | Q(user2=user))
     
     def perform_create(self, serializer):
-
         """Создание нового диалога."""
         user1 = self.request.user
         user2_id = self.request.data.get('user2')
 
-        # Проверьте, существует ли второй пользователь
         user2 = User.objects.filter(id=user2_id).first()
         if not user2:
             return Response({"error": "Пользователь не существует."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Проверьте, существует ли уже диалог между этими пользователями
         if Dialog.objects.filter(Q(user1=user1, user2=user2) | Q(user1=user2, user2=user1)).exists():
             return Response({"error": "Диалог уже существует."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -44,6 +43,7 @@ class DialogListCreateView(generics.ListCreateAPIView):
 
 class DialogDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Представление для получения, обновления и удаления конкретного диалога."""
+    
     permission_classes = [IsAuthenticated]
     queryset = Dialog.objects.all()
 
@@ -51,7 +51,6 @@ class DialogDetailView(generics.RetrieveUpdateDestroyAPIView):
         dialog = self.get_object()
 
         # Проверка, является ли пользователь одним из участников диалога
-
         if dialog.user1 != request.user and dialog.user2 != request.user:
             return Response({"error": "У вас нет прав для удаления этого диалога."}, status=status.HTTP_403_FORBIDDEN)
 
@@ -60,6 +59,7 @@ class DialogDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class MessageListCreateView(generics.ListCreateAPIView):
     """Представление для получения списка и создания сообщений в диалоге."""
+
     permission_classes = [IsAuthenticated]
     serializer_class = MessageSerializer
 
@@ -69,5 +69,6 @@ class MessageListCreateView(generics.ListCreateAPIView):
 
 class MessageDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Представление для получения, обновления и удаления конкретного сообщения."""
+    
     queryset = Message.objects.all()
     serializer_class = MessageSerializer

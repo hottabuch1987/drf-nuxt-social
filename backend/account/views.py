@@ -14,6 +14,7 @@ from .serializers import UserSerializer, ChangePasswordSerializer, EditUserSeria
 from .tasks import send_verification_email
 from .services.user_service import UserService
 
+
 class CustomUserCreate(APIView):
     '''Create a new user'''
 
@@ -109,6 +110,8 @@ class ResendActivationCode(APIView):
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
+    '''Custom token obtain pair view'''
+
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
@@ -133,6 +136,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 class MeView(APIView):
     '''Get current user'''
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -142,6 +146,8 @@ class MeView(APIView):
     
     
 class BlacklistTokenUpdateView(APIView):
+    '''Blacklist token'''
+
     def post(self, request):
         try:
             refresh_token = request.data["refresh_token"]
@@ -153,6 +159,7 @@ class BlacklistTokenUpdateView(APIView):
 
 class UserListView(APIView):
     '''List all users'''
+
     permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         users = User.objects.filter(is_active=True).order_by('-date_joined')
@@ -161,6 +168,8 @@ class UserListView(APIView):
     
 
 class ProfileEditView(APIView):
+    '''Edit profile'''
+
     permission_classes = [IsAuthenticated]
 
     def put(self, request, format=None):
@@ -230,6 +239,8 @@ class DeleteUserView(APIView):
 
 
 class UserDetail(APIView):
+    '''Get user by slug'''
+    
     permission_classes = [IsAuthenticated]
     def get(self, request, slug, format=None):
         user = get_object_or_404(User, slug=slug)
